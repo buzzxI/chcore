@@ -51,17 +51,19 @@
 
 #define SPSR_ELX_DAIF           (0b1111 << 6)
 #define SPSR_ELX_EL1H           (0b0101)
+#define SPSR_ELX_EL2H			(0b1001)
 
 #define ICH_HCR_EL2             S3_4_C12_C11_0
 #define ICC_SRE_EL2             S3_4_C12_C9_5
 
 BEGIN_FUNC(arm64_elX_to_el1)
 	/* LAB 1 TODO 1 BEGIN */
-
+	mrs x9, CurrentEL
 	/* LAB 1 TODO 1 END */
 
 	// Check the current exception level.
 	cmp x9, CURRENTEL_EL1
+// jump to the end if current exception level is 1
 	beq .Ltarget
 	cmp x9, CURRENTEL_EL2
 	beq .Lin_el2
@@ -75,9 +77,13 @@ BEGIN_FUNC(arm64_elX_to_el1)
 
 	// Set the return address and exception level.
 	/* LAB 1 TODO 2 BEGIN */
-
+	adr x9, .Ltarget
+	msr elr_el3, x9
+	mov x9, SPSR_ELX_DAIF | SPSR_ELX_EL1H
+	msr spsr_el3, x9
 	/* LAB 1 TODO 2 END */
 
+// current exception level is 2
 .Lin_el2:
 	// Disable EL1 timer traps and the timer offset.
 	mrs x9, cnthctl_el2
@@ -126,6 +132,40 @@ BEGIN_FUNC(arm64_elX_to_el1)
 
 .Ltarget:
 	ret
+
+; /* BEGIN COPY FROM zircon */
+; .inEL2:
+; 	//检查并配置时钟
+; 	mrs x9, cnthctl_el2
+; 	orr x9, x9, CNTHCTL_EL2_EL1PCEN | CNTHCTL_EL2_EL1PCTEN
+; 	msr cnthctl_el2, x9
+; 	msr cntvoff_el2, xzr
+	
+; 	// set exception link register(EL2)
+; 	adr x9, .Ltarget
+; 	msr elr_el3, x9
+; 	// set save program status register(EL2)
+; 	mov x9, SPSR_ELX_DAIF | SPSR_ELX_EL1H
+; 	msr spsr_el3, x9
+
+; .confEL1:
+; 	// Disable EL2 coprocessor traps.
+; 	mov x9, CPTR_EL2_RES1
+; 	msr cptr_el2, x9
+
+; 	// Set EL1 to 64bit.
+; 	mov x9, HCR_EL2_RW
+; 	msr hcr_el2, x9
+
+; 	// Disable EL1 FPU traps.
+; 	mov x9, CPACR_EL1_FPEN
+; 	msr cpacr_el1, x9
+
+; 	isb
+
+; 	eret
+; /* END COPY FROM zircon */
+
 END_FUNC(arm64_elX_to_el1)
 
 // See https://developer.arm.com/documentation/den0024/a/Caches/Cache-maintenance
@@ -249,7 +289,7 @@ BEGIN_FUNC(el1_mmu_activate)
 	mrs     x8, sctlr_el1
 	/* Enable MMU */
 	/* LAB 1 TODO 4 BEGIN */
-
+	orr		x8, x8, #SCTLR_EL1_M
 	/* LAB 1 TODO 4 END */
 	/* Disable alignment checking */
 	bic     x8, x8, #SCTLR_EL1_A

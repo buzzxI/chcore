@@ -29,6 +29,8 @@ primary:
 	/* Turn to el1 from other exception levels. */
 	bl 	arm64_elX_to_el1
 
+	mrs x1, CurrentEL
+
 	/* Prepare stack pointer and jump to C. */
 	ldr 	x0, =boot_cpu_stack
 	add 	x0, x0, #INIT_STACK_SIZE
