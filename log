@@ -1,4 +1,14 @@
 [1mCleaning...[0m
+[1mConfiguring CMake...[0m
+loading initial cache file scripts/build/cmake/LoadConfigDefault.cmake
+-- CHCORE_CROSS_COMPILE: aarch64-linux-gnu-
+-- CHCORE_KERNEL_DEBUG: OFF
+-- CHCORE_KERNEL_TEST: ON
+-- CHCORE_PLAT: raspi3
+-- CHCORE_VERBOSE_BUILD: OFF
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /chos/build
 Scanning dependencies of target clean-all
 Scanning dependencies of target kernel-clean
 Built target kernel-clean
@@ -21,7 +31,8 @@ loading initial cache file scripts/build/cmake/LoadConfigAsk.cmake
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
 -- CHCORE_CROSS_COMPILE: aarch64-linux-gnu-
--- CHCORE_KERNEL_DEBUG: ON
+-- CHCORE_KERNEL_DEBUG: OFF
+-- CHCORE_KERNEL_TEST: ON
 -- CHCORE_PLAT: raspi3
 -- CHCORE_VERBOSE_BUILD: OFF
 -- Configuring done
@@ -54,7 +65,7 @@ loading initial cache file /chos/build/kernel-prefix/tmp/kernel-cache-.cmake
 -- CMAKE_SYSTEM_NAME: Generic
 -- CMAKE_HOST_SYSTEM_PROCESSOR: x86_64
 -- CMAKE_HOST_SYSTEM_NAME: Linux
--- CMAKE_BUILD_TYPE: Debug
+-- CMAKE_BUILD_TYPE: Release
 -- CMAKE_ASM_COMPILER: /usr/bin/aarch64-linux-gnu-gcc
 -- CMAKE_C_COMPILER: /usr/bin/aarch64-linux-gnu-gcc
 -- CMAKE_C_OUTPUT_EXTENSION: .obj
@@ -65,7 +76,8 @@ loading initial cache file /chos/build/kernel-prefix/tmp/kernel-cache-.cmake
 -- CMAKE_INSTALL_PREFIX: /chos/build
 -- CHCORE_ARCH: aarch64
 -- CHCORE_CROSS_COMPILE: aarch64-linux-gnu-
--- CHCORE_KERNEL_DEBUG: ON
+-- CHCORE_KERNEL_DEBUG: OFF
+-- CHCORE_KERNEL_TEST: ON
 -- CHCORE_PLAT: raspi3
 -- CHCORE_PROJECT_DIR: /chos
 -- CHCORE_VERBOSE_BUILD: OFF
@@ -77,30 +89,37 @@ loading initial cache file /chos/build/kernel-prefix/tmp/kernel-cache-.cmake
 Scanning dependencies of target linker.ld
 [  0%] Built target linker.ld
 Scanning dependencies of target kernel.img
-[  9%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/tools.S.obj
-[ 18%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/init_c.c.obj
-[ 27%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/plat/raspi3/uart/uart.c.obj
-[ 45%] Building C object CMakeFiles/kernel.img.dir/lib/printk.c.obj
-[ 45%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/head.S.obj
-[ 54%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/tools.S.obj
-[ 63%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/start.S.obj
-[ 81%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/mmu.c.obj
-[ 81%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/main.c.obj
-[ 90%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/peripherals/uart.c.obj
-[100%] Linking C executable kernel.img
-[100%] Built target kernel.img
-Scanning dependencies of target kernel8.img
-[100%] Built target kernel8.img
-[ 87%] Performing install step for 'kernel'
-[  0%] Built target linker.ld
-[100%] Built target kernel.img
-[100%] Built target kernel8.img
-Install the project...
--- Install configuration: "Debug"
--- Installing: /chos/build/kernel.img
--- Installing: /chos/build/kernel8.img
--- Installing: /chos/build/emulate.sh
--- Installing: /chos/build/simulate.sh
-[100%] Completed 'kernel'
-[100%] Built target kernel
-[0;32m[1mSucceeded to build all targets[0m
+[  4%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/head.S.obj
+[  8%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/main.c.obj
+[ 13%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/tools.S.obj
+[ 17%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/start.S.obj
+[ 21%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/mmu.c.obj
+[ 26%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/tools.S.obj
+[ 30%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/init/init_c.c.obj
+[ 34%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/boot/raspi3/peripherals/uart.c.obj
+[ 39%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/mm/memcpy.S.obj
+[ 43%] Building ASM object CMakeFiles/kernel.img.dir/arch/aarch64/mm/memmove.S.obj
+[ 47%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/mm/memset.c.obj
+[ 52%] Building C object CMakeFiles/kernel.img.dir/arch/aarch64/mm/page_table.c.obj
+/chos/kernel/arch/aarch64/mm/page_table.c: In function 'query_in_pgtbl':
+/chos/kernel/arch/aarch64/mm/page_table.c:235:17: error: a label can only be part of a statement and a declaration is not a statement
+  235 |                 paddr_t add = ((*entry)->l1_block.pfn << L1_INDEX_SHIFT) | (va & L1_BLOCK_MASK);
+      |                 ^~~~~~~
+/chos/kernel/arch/aarch64/mm/page_table.c:223:13: warning: unused variable 'rst' [-Wunused-variable]
+  223 |         int rst;
+      |             ^~~
+/chos/kernel/arch/aarch64/mm/page_table.c: In function 'map_range_in_pgtbl_huge':
+/chos/kernel/arch/aarch64/mm/page_table.c:380:1: warning: control reaches end of non-void function [-Wreturn-type]
+  380 | }
+      | ^
+/chos/kernel/arch/aarch64/mm/page_table.c: In function 'unmap_range_in_pgtbl_huge':
+/chos/kernel/arch/aarch64/mm/page_table.c:387:1: warning: control reaches end of non-void function [-Wreturn-type]
+  387 | }
+      | ^
+make[5]: *** [CMakeFiles/kernel.img.dir/build.make:158: CMakeFiles/kernel.img.dir/arch/aarch64/mm/page_table.c.obj] Error 1
+make[4]: *** [CMakeFiles/Makefile2:218: CMakeFiles/kernel.img.dir/all] Error 2
+make[3]: *** [Makefile:130: all] Error 2
+make[2]: *** [CMakeFiles/kernel.dir/build.make:112: kernel-prefix/src/kernel-stamp/kernel-build] Error 2
+make[1]: *** [CMakeFiles/Makefile2:132: CMakeFiles/kernel.dir/all] Error 2
+make: *** [Makefile:84: all] Error 2
+make: *** [Makefile:24: build] Error 2

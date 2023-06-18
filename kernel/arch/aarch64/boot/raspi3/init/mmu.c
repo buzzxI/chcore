@@ -24,6 +24,7 @@ typedef unsigned int u32;
 #define PTP_ENTRIES 512
 /* The size of one page table page */
 #define PTP_SIZE 4096
+// align block with n
 #define ALIGN(n) __attribute__((__aligned__(n)))
 u64 boot_ttbr0_l0[PTP_ENTRIES] ALIGN(PTP_SIZE);
 u64 boot_ttbr0_l1[PTP_ENTRIES] ALIGN(PTP_SIZE);
@@ -87,19 +88,40 @@ void init_boot_pt(void)
         /* TTBR1_EL1 0-1G */
         /* LAB 2 TODO 1 BEGIN */
         /* Step 1: set L0 and L1 page table entry */
+        vaddr =  PHYSMEM_START + KERNEL_VADDR;
 
+        boot_ttbr1_l0[GET_L0_INDEX(vaddr)] = ((u64)boot_ttbr1_l1) | IS_TABLE
+                                                            | IS_VALID | NG;
 
+        boot_ttbr1_l1[GET_L1_INDEX(vaddr)] = ((u64)boot_ttbr1_l2) | IS_TABLE
+                                                            | IS_VALID | NG;
         /* Step 2: map PHYSMEM_START ~ PERIPHERAL_BASE with 2MB granularity */
-
+        for (; vaddr < PERIPHERAL_BASE + KERNEL_VADDR; vaddr += SIZE_2M) {
+                boot_ttbr1_l2[GET_L2_INDEX(vaddr)] = 
+                (vaddr - KERNEL_VADDR)
+                | UXN
+                | ACCESSED
+                | NG
+                | NORMAL_MEMORY
+                | IS_VALID;
+        }
 
         /* Step 2: map PERIPHERAL_BASE ~ PHYSMEM_END with 2MB granularity */
-
+        for (; vaddr < PHYSMEM_END + KERNEL_VADDR; vaddr += SIZE_2M) {
+                boot_ttbr1_l2[GET_L2_INDEX(vaddr)] = 
+                (vaddr - KERNEL_VADDR)
+                | UXN
+                | ACCESSED
+                | NG
+                | DEVICE_MEMORY
+                | IS_VALID;
+        }
         /* LAB 2 TODO 1 END */
 
         /*
          * Local peripherals, e.g., ARM timer, IRQs, and mailboxes
          *
-         * 0x4000_0000 .. 0xFFFF_FFFF
+         * 0x4000_0000 .. 0x8000_0000
          * 1G is enough (for Mini-UART). Map 1G page here.
          */
         vaddr = KERNEL_VADDR + PHYSMEM_END;
